@@ -1,4 +1,5 @@
 "use client";
+// import { useRouter } from "next/navigation";
 import React from "react";
 
 function truncateDescription(description: string) {
@@ -9,12 +10,23 @@ function truncateDescription(description: string) {
 
 const CardItem: React.FC = () => {
   const description = " lorem. ipsum. siweragr wrgra aw";
+  //const router = useRouter();
   return (
-    <main className="flex flex-col w-full h-[280px] relative">
-      <div className="flex flex-row p-2 w-full h-full hover:shadow-2xl hover:bg-white transition-all duration-500 ease-in-out rounded-2xl relative">
+    <button
+      className="flex flex-col w-full h-[280px] relative"
+      onClick={() => {
+        // const fetchData = async () => {
+        //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}`);
+        //   const data = await res.json();
+        //   console.log(data);
+        // };
+        // fetchData();
+      }}
+    >
+      <div className="flex flex-row p-2 w-full h-full hover:shadow-lg hover:bg-white transition-all duration-500 ease-in-out rounded-2xl relative">
         {/* Options Menu Button */}
         <div className="absolute top-4 right-4">
-          <button
+          {/* <button
             className="text-black hover:bg-gray-300 w-8 rounded-full text-2xl font-bold focus:outline-none"
             title="Options"
             onClick={() => {
@@ -23,7 +35,7 @@ const CardItem: React.FC = () => {
             }}
           >
             ⋮
-          </button>
+          </button> */}
         </div>
 
         {/* Left Image/Preview Box */}
@@ -40,16 +52,19 @@ const CardItem: React.FC = () => {
           </h1>
 
           <div className="w-2/6 absolute bottom-2 right-2 flex flex-col transition-all ease-in-out duration-500 bg-gray-200 hover:bg-gray-300 rounded-2xl">
-            <button className="bg-green-600 h-14 transition-all ease-in-out duration-500 w-full hover:bg-green-700 hover:shadow-2xl text-2xl  font-bold text-white rounded-2xl">
+            {/* <button
+              className="bg-green-600 h-14 transition-all ease-in-out duration-500 w-full hover:bg-green-700 hover:shadow-2xl text-2xl  font-bold text-white rounded-2xl"
+              onClick={() => {}}
+            >
               CONTACT
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
 
       {/* Divider Line */}
       <div className="h-[1px] w-full bg-gray-300 rounded-full"></div>
-    </main>
+    </button>
   );
 };
 
