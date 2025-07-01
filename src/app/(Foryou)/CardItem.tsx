@@ -8,6 +8,22 @@ function truncateDescription(description: string) {
   return sentences.slice(0, 2).join(" ").trim() + "...";
 }
 
+// const sendData = async () => {
+//   try {
+//     const response = await fetch(`http://backend:2800`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ a: 5, b: 6 }),
+//     });
+//     const data = await response.json();
+//     console.log(data);
+//   } catch (error) {
+//     console.error("Error:", error);
+//   }
+// };
+
 const CardItem: React.FC = () => {
   const description = " lorem. ipsum. siweragr wrgra aw";
   //const router = useRouter();
@@ -15,12 +31,8 @@ const CardItem: React.FC = () => {
     <button
       className="flex flex-col w-full h-[280px] relative"
       onClick={() => {
-        // const fetchData = async () => {
-        //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}`);
-        //   const data = await res.json();
-        //   console.log(data);
-        // };
-        // fetchData();
+        // console.log("hit");
+        // sendData();
       }}
     >
       <div className="flex flex-row p-2 w-full h-full hover:shadow-lg hover:bg-white transition-all duration-500 ease-in-out rounded-2xl relative">
