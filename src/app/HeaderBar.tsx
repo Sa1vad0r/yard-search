@@ -3,7 +3,6 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./useAuth";
 import { auth } from "../../firebaseConfig"; // Adjust the import path as necessary
-import { onAuthStateChanged, User } from "firebase/auth";
 
 interface HeaderBarProps {
   showSearchByDefault?: boolean;
@@ -20,7 +19,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
 }) => {
   const [showMenu, setShowMenu] = React.useState(false);
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const user = useAuth();
 
   return (
     <div className="flex flex-col md:flex-row items-center bg-emerald-900 p-4 w-full flex-shrink-0 gap-2 md:gap-0">

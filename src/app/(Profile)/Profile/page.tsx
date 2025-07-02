@@ -35,7 +35,7 @@ export default function ProfilePage() {
               Name: {user.displayName || "N/A"}
             </p>
             <p className="text-gray-700 text-xl">Email: {user.email}</p>
-            <p className="text-gray-700 text-xl">You're signed in ✔️</p>
+            <p className="text-gray-700 text-xl">You&apos;re signed in ✔️</p>
           </>
         ) : (
           <p className="text-red-500 text-lg">You are not signed in.</p>
