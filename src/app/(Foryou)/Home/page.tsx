@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import CardItem from "../CardItem";
 import HeaderBar from "@/app/HeaderBar";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../../../firebaseConfig"; // Make sure you export your Firestore db
+import { db } from "../../../../firebaseConfig";
 
 interface Post {
   authorID: string;

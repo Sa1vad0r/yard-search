@@ -15,13 +15,6 @@ interface CardItemProps {
   post: Post;
 }
 
-// function truncateDescription(description: string) {
-//   const sentences = description.match(/[^.!?]+[.!?]+/g) || [];
-//   return sentences.length > 0
-//     ? sentences.slice(0, 2).join(" ").trim() + "..."
-//     : description;
-// }
-
 const CardItem: React.FC<CardItemProps> = ({ post }) => {
   const [authorName, setAuthorName] = useState<string>("");
 
