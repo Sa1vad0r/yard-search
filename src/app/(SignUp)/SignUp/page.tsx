@@ -131,6 +131,7 @@ const SignUpPage: React.FC = () => {
             style={{ width: "100%", padding: 10 }}
             onClick={() => {
               handleSignUp();
+              router.push("/Profile");
             }}
           >
             Sign Up
