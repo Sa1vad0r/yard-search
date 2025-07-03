@@ -1,80 +1,84 @@
 "use client";
-// import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../firebaseConfig"; // Make sure this is the Firestore export
 
-function truncateDescription(description: string) {
-  const sentences = description.match(/[^.!?]+[.!?]+/g);
-  if (!sentences || sentences.length <= 0) return description;
-  return sentences.slice(0, 2).join(" ").trim() + "...";
+interface Post {
+  authorID: string;
+  id: string;
+  Title: string;
+  Content: string;
+  price: number;
 }
 
-// const sendData = async () => {
-//   try {
-//     const response = await fetch(`http://backend:2800`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ a: 5, b: 6 }),
-//     });
-//     const data = await response.json();
-//     console.log(data);
-//   } catch (error) {
-//     console.error("Error:", error);
-//   }
-// };
+interface CardItemProps {
+  post: Post;
+}
 
-const CardItem: React.FC = () => {
-  const description = " lorem. ipsum. siweragr wrgra aw";
-  //const router = useRouter();
+// function truncateDescription(description: string) {
+//   const sentences = description.match(/[^.!?]+[.!?]+/g) || [];
+//   return sentences.length > 0
+//     ? sentences.slice(0, 2).join(" ").trim() + "..."
+//     : description;
+// }
+
+const CardItem: React.FC<CardItemProps> = ({ post }) => {
+  const [authorName, setAuthorName] = useState<string>("");
+
+  useEffect(() => {
+    const fetchAuthor = async () => {
+      try {
+        console.log("Fetching user with ID:", post.authorID);
+        const docRef = doc(db, "users", post.authorID);
+        console.log("DocRef path:", docRef.path);
+
+        const docSnap = await getDoc(docRef);
+        console.log("Document exists:", docSnap.exists());
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log("Document data:", data);
+
+          setAuthorName(data.name || "Unknown Author");
+        } else {
+          console.warn("No such document found.");
+          setAuthorName("Unknown Author");
+        }
+      } catch (err) {
+        console.error("Error while fetching author:", err);
+        setAuthorName("Unknown Author");
+      }
+    };
+
+    fetchAuthor();
+  }, [post.authorID]);
+
   return (
-    <button
-      className="flex flex-col w-full h-[280px] relative"
-      onClick={() => {
-        // console.log("hit");
-        // sendData();
-      }}
-    >
+    <button className="flex flex-col w-full h-[280px] relative">
       <div className="flex flex-row p-2 w-full h-full hover:shadow-lg hover:bg-white transition-all duration-500 ease-in-out rounded-2xl relative">
-        {/* Options Menu Button */}
-        <div className="absolute top-4 right-4">
-          {/* <button
-            className="text-black hover:bg-gray-300 w-8 rounded-full text-2xl font-bold focus:outline-none"
-            title="Options"
-            onClick={() => {
-              // Placeholder for options menu functionality
-              console.log("Options clicked");
-            }}
-          >
-            ⋮
-          </button> */}
+        <div className="bg-green-100 shadow-inner rounded-2xl h-full w-4/6">
+          {/* {post.imageUrl && (
+            <img
+              src={post.imageUrl}
+              alt={post.title}
+              className="w-full h-full object-cover rounded-2xl"
+            />
+          )} */}
         </div>
 
-        {/* Left Image/Preview Box */}
-        <div className="bg-green-100 shadow-inner rounded-2xl h-full w-4/6"></div>
-
-        {/* Right Info Section */}
-        <div className="flex flex-col w-2/6 mx-4 space-y-2">
-          <h1 className="text-black text-xl font-serif font-bold">1000$</h1>
-          <h1 className="text-black text-lg font-serif">
-            {truncateDescription(description)}
-          </h1>
-          <h1 className="text-black text-sm font-serif font-bold">
-            14 miles away
+        <div className="flex flex-col text-left w-2/6 mx-4 space-y-2">
+          <h1 className="text-black text-xl font-serif font-bold">
+            {post.Title}
           </h1>
 
-          <div className="w-2/6 absolute bottom-2 right-2 flex flex-col transition-all ease-in-out duration-500 bg-gray-200 hover:bg-gray-300 rounded-2xl">
-            {/* <button
-              className="bg-green-600 h-14 transition-all ease-in-out duration-500 w-full hover:bg-green-700 hover:shadow-2xl text-2xl  font-bold text-white rounded-2xl"
-              onClick={() => {}}
-            >
-              CONTACT
-            </button> */}
-          </div>
+          <h1 className="text-black text-md font-serif">{post.Content}</h1>
+          <div className="my-auto w-full"></div>
+          <h1 className="text-green-600 text-xl font-serif font-bold">
+            {post.price}$
+          </h1>
+          <h1 className="text-black text-xs italic">Seller: {authorName}</h1>
         </div>
       </div>
-
-      {/* Divider Line */}
       <div className="h-[1px] w-full bg-gray-300 rounded-full"></div>
     </button>
   );
