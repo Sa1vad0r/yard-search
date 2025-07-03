@@ -1,12 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../../firebaseConfig";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { auth, db } from "../../../../firebaseConfig";
 import { useRouter } from "next/navigation";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 const SignUpPage: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +18,13 @@ const SignUpPage: React.FC = () => {
   const handleSignUp = async () => {
     setError(null);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password)
+        .then(async () => {
+          await handleUserData(name, username, email);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
       setSubmitted(true);
     } catch (err) {
       if (err instanceof Error) {
@@ -24,6 +32,35 @@ const SignUpPage: React.FC = () => {
       } else {
         setError("An unknown error occurred.");
       }
+    }
+  };
+
+  const handleUserData = async (
+    name: string,
+    username: string,
+    email: string
+  ) => {
+    console.log("Running handleUserData");
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.warn("No authenticated user.");
+      return;
+    }
+    const uid = user.uid;
+    try {
+      await setDoc(doc(db, "users", uid), {
+        UID: uid,
+        name,
+        username,
+        email,
+        createdAt: serverTimestamp(),
+      });
+      console.log("User document created.");
+    } catch (err) {
+      console.error("Error creating user document:", err);
     }
   };
 
@@ -42,6 +79,19 @@ const SignUpPage: React.FC = () => {
                 name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
+                style={{ width: "100%", padding: 8, marginTop: 4 }}
+              />
+            </label>
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label>
+              Username
+              <input
+                type="text"
+                name="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 style={{ width: "100%", padding: 8, marginTop: 4 }}
               />
@@ -79,7 +129,9 @@ const SignUpPage: React.FC = () => {
           <button
             type="button"
             style={{ width: "100%", padding: 10 }}
-            onClick={handleSignUp}
+            onClick={() => {
+              handleSignUp();
+            }}
           >
             Sign Up
           </button>

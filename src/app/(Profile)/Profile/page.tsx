@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import HeaderBar from "@/app/HeaderBar";
 import { auth, db } from "../../../../firebaseConfig";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
@@ -11,39 +11,27 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        console.log("User is signed in:", currentUser.uid);
+      if (!currentUser) {
+        setUser(null);
+        setUserName("");
+        return;
+      }
 
-        console.log("Searching for UID:", currentUser.uid);
-        try {
-          const usersRef = collection(db, "users");
-          const q = query(usersRef, where("UID", "==", currentUser.uid));
-          const querySnapshot = await getDocs(q);
-
-          console.log("Query snapshot size:", querySnapshot.size);
-          querySnapshot.forEach((doc) => console.log(doc.id, doc.data()));
-
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            setUserName(userData.name || "Unknown Author");
-            console.log("Query snapshot size:", querySnapshot.size);
-            querySnapshot.forEach((doc) => {
-              console.log("Matched doc ID:", doc.id);
-              console.log("Matched data:", doc.data());
-            });
-          } else {
-            console.warn("No user document found for UID:", currentUser.uid);
-            setUserName("Unknown Author");
-          }
-        } catch (err) {
-          console.error("Error while fetching user:", err);
+      setUser(currentUser);
+      const docRef = doc(db, "users", currentUser.uid);
+      try {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log("Fetched user:", data);
+          setUserName(data.name || "Unknown Author");
+        } else {
+          console.warn("User document not found.");
           setUserName("Unknown Author");
         }
-      } else {
-        console.warn("No user is logged in.");
-        setUser(null);
-        setUserName(""); // Reset name if signed out
+      } catch (err) {
+        console.error("Error fetching user:", err);
+        setUserName("Unknown Author");
       }
     });
 
