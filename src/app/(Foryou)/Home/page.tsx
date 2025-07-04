@@ -11,8 +11,6 @@ interface Post {
   Title: string;
   Content: string;
   price: number;
-  // distance?: string;
-  // imageUrl?: string;
 }
 
 const Page: React.FC = () => {

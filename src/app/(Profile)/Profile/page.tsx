@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import Overlay from "@/app/Components/Overlay";
 import { v4 } from "uuid";
+import UserPosts from "@/app/Components/userPosts";
 
 export default function ProfilePage() {
   const [itemName, setItemName] = useState<string>("");
@@ -121,6 +122,10 @@ export default function ProfilePage() {
             <p className="text-gray-700 text-xl">Name: {userName || "N/a"}</p>
             <p className="text-gray-700 text-xl">Email: {user.email}</p>
             {/* <p className="text-gray-700 text-xl">You&apos;re signed in ✔️</p> */}
+            <div className="bg-gray-700 w-full p-[1px] rounded"></div>
+            <div className="flex flex-col space-y-2">
+              <UserPosts></UserPosts>
+            </div>
             <button
               onClick={toggleOverlay}
               className="text-white bg-blue-600 px-7 py-4 rounded-2xl font-bold  hover:bg-blue-500 transition-all duration-300 ease-in-out"
