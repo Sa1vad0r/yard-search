@@ -1,11 +1,36 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Post } from "./commonInterface/PostInt";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import {
+  arrayRemove,
+  deleteDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "../../../firebaseConfig";
 
 const UserPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+
+  const handleDelete = async (postId: string) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    try {
+      await deleteDoc(doc(db, "posts", postId));
+
+      const userRef = doc(db, "users", uid);
+      await updateDoc(userRef, {
+        posts: arrayRemove(postId),
+      });
+
+      console.log(`Post ${postId} deleted successfully.`);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
 
   useEffect(() => {
     const uid = auth.currentUser?.uid || "";
@@ -49,7 +74,12 @@ const UserPosts: React.FC = () => {
               <td className="p-2 text-black">{post.Content}</td>
               <td className="p-2 text-black">${post.price}</td>
               <td className="p-2 text-black">
-                <button className="bg-red-500 text-white px-4 py-2 rounded">
+                <button
+                  onClick={() => {
+                    handleDelete(post.id);
+                  }}
+                  className="bg-red-500 text-white px-4 py-2 rounded"
+                >
                   Delete
                 </button>
               </td>
