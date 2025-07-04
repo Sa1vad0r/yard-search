@@ -126,12 +126,12 @@ export default function ProfilePage() {
             <div className="flex flex-col space-y-2">
               <UserPosts></UserPosts>
             </div>
-            <button
+            {/* <button
               onClick={toggleOverlay}
               className="text-white bg-blue-600 px-7 py-4 rounded-2xl font-bold  hover:bg-blue-500 transition-all duration-300 ease-in-out"
             >
               POST
-            </button>
+            </button> */}
 
             <Overlay isOpen={isOpen} onClose={toggleOverlay}>
               <form
