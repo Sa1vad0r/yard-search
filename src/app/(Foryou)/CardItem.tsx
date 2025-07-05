@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebaseConfig"; // Make sure this is the Firestore export
+import { useRouter } from "next/navigation";
 
 interface Post {
   authorID: string;
@@ -17,6 +18,7 @@ interface CardItemProps {
 
 const CardItem: React.FC<CardItemProps> = ({ post }) => {
   const [authorName, setAuthorName] = useState<string>("");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchAuthor = async () => {
@@ -47,7 +49,12 @@ const CardItem: React.FC<CardItemProps> = ({ post }) => {
   }, [post.authorID]);
 
   return (
-    <button className="flex flex-col w-full h-[280px] relative">
+    <button
+      className="flex flex-col w-full h-[280px] relative"
+      onClick={() => {
+        router.push(`/Item/${post.id}`);
+      }}
+    >
       <div className="flex flex-row p-2 w-full h-full hover:shadow-lg hover:bg-white transition-all duration-500 ease-in-out rounded-2xl relative">
         <div className="bg-green-100 shadow-inner rounded-2xl h-full w-4/6">
           {/* {post.imageUrl && (
