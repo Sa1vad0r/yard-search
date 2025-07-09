@@ -5,11 +5,11 @@ import { db } from "../../../../../firebaseConfig";
 import { Post } from "@/app/Components/commonInterface/PostInt";
 import HeaderBar from "@/app/HeaderBar";
 
-interface PageProps {
+type PageProps = {
   params: {
     id: string;
   };
-}
+};
 
 export default function Page({ params }: PageProps) {
   const [query, setQuery] = useState("");
