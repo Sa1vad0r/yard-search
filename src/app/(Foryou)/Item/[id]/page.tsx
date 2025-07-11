@@ -1,25 +1,21 @@
 "use client";
-export const dynamic = "force-dynamic";
 
-import { doc, getDoc } from "firebase/firestore";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../../../firebaseConfig";
 import { Post } from "@/app/Components/commonInterface/PostInt";
 import HeaderBar from "@/app/HeaderBar";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
-
-export default function Page({ params }: PageProps) {
+export default function Page() {
+  const params = useParams();
   const [query, setQuery] = useState("");
-  const { id } = params;
   const [post, setPost] = useState<Post | null>(null);
 
+  const id = params?.id as string;
+
   useEffect(() => {
-    const fetchSinglePost = async (id: string) => {
+    const fetchSinglePost = async () => {
       const postRef = doc(db, "posts", id);
       const postSnap = await getDoc(postRef);
 
@@ -29,7 +25,10 @@ export default function Page({ params }: PageProps) {
         throw new Error("Post not found");
       }
     };
-    fetchSinglePost(id);
+
+    if (id) {
+      fetchSinglePost();
+    }
   }, [id]);
 
   return (
