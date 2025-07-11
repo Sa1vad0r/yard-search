@@ -1,4 +1,6 @@
 "use client";
+export const dynamic = "force-dynamic";
+
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../../../../../firebaseConfig";
@@ -28,7 +30,7 @@ export default function Page({ params }: PageProps) {
       }
     };
     fetchSinglePost(id);
-  });
+  }, [id]);
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
