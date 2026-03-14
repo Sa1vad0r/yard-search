@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../firebaseConfig"; // Make sure this is the Firestore export
+import { db } from "../../../firebaseConfig";
 import { useRouter } from "next/navigation";
 
 interface Post {
@@ -10,6 +10,7 @@ interface Post {
   Title: string;
   Content: string;
   price: number;
+  imageUrl?: string;
 }
 
 interface CardItemProps {
@@ -23,25 +24,16 @@ const CardItem: React.FC<CardItemProps> = ({ post }) => {
   useEffect(() => {
     const fetchAuthor = async () => {
       try {
-        console.log("Fetching user with ID:", post.authorID);
         const docRef = doc(db, "users", post.authorID);
-        console.log("DocRef path:", docRef.path);
-
         const docSnap = await getDoc(docRef);
-        console.log("Document exists:", docSnap.exists());
-
         if (docSnap.exists()) {
           const data = docSnap.data();
-          console.log("Document data:", data);
-
-          setAuthorName(data.name || "Unknown Author");
+          setAuthorName(data.name || "Unknown Seller");
         } else {
-          console.warn("No such document found.");
-          setAuthorName("Unknown Author");
+          setAuthorName("Unknown Seller");
         }
-      } catch (err) {
-        console.error("Error while fetching author:", err);
-        setAuthorName("Unknown Author");
+      } catch {
+        setAuthorName("Unknown Seller");
       }
     };
 
@@ -50,36 +42,46 @@ const CardItem: React.FC<CardItemProps> = ({ post }) => {
 
   return (
     <button
-      className="flex flex-col w-full h-[280px] relative"
-      onClick={() => {
-        router.push(`/Item/${post.id}`);
-      }}
+      className="group flex flex-col bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transition-all duration-200 text-left w-full"
+      onClick={() => router.push(`/Item/${post.id}`)}
     >
-      <div className="flex flex-row p-2 w-full h-full hover:shadow-lg hover:bg-white transition-all duration-500 ease-in-out rounded-2xl relative">
-        <div className="bg-green-100 shadow-inner rounded-2xl h-full w-4/6">
-          {/* {post.imageUrl && (
-            <img
-              src={post.imageUrl}
-              alt={post.title}
-              className="w-full h-full object-cover rounded-2xl"
-            />
-          )} */}
-        </div>
-
-        <div className="flex flex-col text-left w-2/6 mx-4 space-y-2">
-          <h1 className="text-black text-xl font-serif font-bold">
-            {post.Title}
-          </h1>
-
-          <h1 className="text-black text-md font-serif">{post.Content}</h1>
-          <div className="my-auto w-full"></div>
-          <h1 className="text-green-600 text-xl font-serif font-bold">
-            {post.price}$
-          </h1>
-          <h1 className="text-black text-xs italic">Seller: {authorName}</h1>
-        </div>
+      {/* Image area */}
+      <div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
+        {post.imageUrl ? (
+          <img
+            src={post.imageUrl}
+            alt={post.Title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <svg
+              className="w-12 h-12 text-gray-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+        )}
       </div>
-      <div className="h-[1px] w-full bg-gray-300 rounded-full"></div>
+
+      {/* Info area */}
+      <div className="p-3 flex flex-col gap-0.5">
+        <p className="text-base font-bold text-gray-900">
+          ${post.price?.toLocaleString() ?? "0"}
+        </p>
+        <p className="text-sm text-gray-700 line-clamp-2 leading-snug">
+          {post.Title}
+        </p>
+        <p className="text-xs text-gray-400 mt-1">{authorName}</p>
+      </div>
     </button>
   );
 };

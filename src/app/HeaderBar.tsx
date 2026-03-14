@@ -2,7 +2,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./useAuth";
-import { auth } from "../../firebaseConfig"; // Adjust the import path as necessary
+import { auth } from "../../firebaseConfig";
 
 interface HeaderBarProps {
   showSearchByDefault?: boolean;
@@ -22,130 +22,129 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   const user = useAuth();
 
   return (
-    <div className="flex flex-col md:flex-row items-center bg-emerald-900 p-4 w-full flex-shrink-0 gap-2 md:gap-0">
-      {/* Top Row: Logo and Mobile Profile Button */}
-      <div className="flex justify-between items-center w-full md:w-1/5 md:justify-start md:gap-4">
-        {/* Logo */}
-        <button
-          className="font-bold text-xl sm:text-2xl font-serif text-white"
-          onClick={() => router.push("/Home")}
-          aria-label="Go to home page"
-        >
-          YARD ~ SEARCH
-        </button>
-
-        {/* Profile Button on mobile (visible below md) */}
-        {/* Hamburger Menu - Mobile */}
-        <div className="md:hidden relative">
-          <button
-            className="w-10 h-10 rounded-full bg-white text-emerald-900 font-bold flex items-center justify-center hover:bg-gray-200 transition"
-            onClick={() => setShowMenu((prev) => !prev)}
-            title="Menu"
-          >
-            ☰
-          </button>
-
-          {showMenu && (
-            <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg z-50">
-              <button
-                onClick={() => router.push("/Profile")}
-                className="w-full text-left px-4 py-2 hover:bg-emerald-100"
-              >
-                Profile
-              </button>
-              <button
-                onClick={() => router.push("/Settings")}
-                className="w-full text-left px-4 py-2 hover:bg-emerald-100"
-              >
-                Settings
-              </button>
-              <button
-                onClick={() => {
-                  auth.signOut();
-                  router.push("/SignIn");
-                }}
-                className="w-full text-left px-4 py-2 hover:bg-emerald-100 text-red-600"
-              >
-                Sign Out
-              </button>
-            </div>
-          )}
+    <header className="flex items-center bg-white border-b border-gray-200 px-4 py-2 w-full flex-shrink-0 gap-3 shadow-sm sticky top-0 z-40">
+      {/* Logo */}
+      <button
+        className="flex items-center gap-2 flex-shrink-0"
+        onClick={() => router.push("/Home")}
+        aria-label="Go to home page"
+      >
+        <div className="w-9 h-9 rounded-full bg-green-600 flex items-center justify-center">
+          <span className="text-white font-bold text-sm">YS</span>
         </div>
-      </div>
+        <span className="hidden sm:block font-bold text-lg text-gray-900 tracking-tight">
+          Yard Search
+        </span>
+      </button>
 
-      {/* Search Bar if enabled */}
+      {/* Search Bar */}
       {showSearchByDefault && (
-        <div className="w-full md:w-3/5 md:mx-auto">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => onQueryChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && pageChange) {
-                router.push("/Search");
-              }
-            }}
-            placeholder="Search"
-            autoComplete="off"
-            className="w-full h-10 p-3 mx-0 sm:mx-16 rounded-full placeholder:text-white placeholder:font-semibold bg-emerald-700 shadow-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-          />
+        <div className="flex-1 max-w-xl">
+          <div className="relative">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => onQueryChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && pageChange) {
+                  router.push("/Search");
+                }
+              }}
+              placeholder="Search Yard Search"
+              autoComplete="off"
+              className="w-full h-10 pl-9 pr-4 rounded-full bg-gray-100 text-gray-900 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all"
+            />
+          </div>
         </div>
       )}
 
-      {/* Profile Button on desktop (always visible on md+) */}
-      {/* Hamburger Menu - Desktop */}
-      <div
-        className={`hidden md:flex relative justify-end items-center ${
-          showSearchByDefault ? "w-1/5" : "w-full"
-        } pr-2`}
-      >
+      {/* Spacer when no search */}
+      {!showSearchByDefault && <div className="flex-1" />}
+
+      {/* Right side actions */}
+      <div className="flex items-center gap-2 flex-shrink-0">
         {user ? (
-          <button
-            className="w-10 h-10 rounded-full bg-white text-emerald-900 font-bold flex items-center justify-center hover:bg-gray-200 transition"
-            onClick={() => setShowMenu((prev) => !prev)}
-            title="Menu"
-          >
-            ☰
-          </button>
+          <div className="relative">
+            <button
+              className="flex items-center gap-2 rounded-full px-3 py-1.5 hover:bg-gray-100 transition"
+              onClick={() => setShowMenu((prev) => !prev)}
+              title="Account menu"
+            >
+              <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">
+                  {user.email?.[0]?.toUpperCase() ?? "U"}
+                </span>
+              </div>
+              <svg
+                className="w-4 h-4 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {showMenu && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowMenu(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-xl z-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  </div>
+                  <button
+                    onClick={() => { setShowMenu(false); router.push("/Profile"); }}
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    My Profile
+                  </button>
+                  <button
+                    onClick={() => { setShowMenu(false); auth.signOut(); router.push("/SignIn"); }}
+                    className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign Out
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         ) : (
           <button
-            onClick={() => {
-              auth.signOut();
-              router.push("/SignIn");
-            }}
-            className=" px-4 py-2 text-center text-green-400 hover:text-green-200"
+            onClick={() => router.push("/SignIn")}
+            className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition"
           >
             Sign In
           </button>
         )}
-
-        {showMenu && (
-          <div className="absolute right-0 top-12 w-40 bg-white shadow-lg rounded-lg z-50">
-            <button
-              onClick={() => router.push("/Profile")}
-              className="w-full px-4 py-2 text-black text-center rounded-t-lg hover:bg-emerald-100"
-            >
-              Profile
-            </button>
-            <button
-              onClick={() => router.push("/Settings")}
-              className="w-full px-4 py-2 text-black text-center hover:bg-emerald-100"
-            >
-              Settings
-            </button>
-            <button
-              onClick={() => {
-                auth.signOut();
-                router.push("/Home");
-              }}
-              className="w-full px-4 py-2 hover:bg-emerald-100 rounded-b-lg text-center text-red-600"
-            >
-              Sign Out
-            </button>
-          </div>
-        )}
       </div>
-    </div>
+    </header>
   );
 };
 
